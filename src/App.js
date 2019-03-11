@@ -6,16 +6,22 @@ import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable';
+import { useField } from './hooks'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
+  // const [username, setUsername] = useState('')
+  // const [password, setPassword] = useState('')
+  // const [newBlogTitle, setNewBlogTitle] = useState('')
+  // const [newBlogAuthor, setNewBlogAuthor] = useState('')
+  // const [newBlogUrl, setNewBlogUrl] = useState('')
   const [notification, setNotification] = useState(null)
+  const username = useField('text')
+  const password = useField('password')
+  const blogTitle = useField('text')
+  const blogAuthor = useField('text')
+  const blogUrl = useField('text')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -53,15 +59,20 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     loginService
-      .login({ username, password })
+      .login({
+        password: password.value,
+        username: username.value
+      })
       .then(user => {
         window.localStorage.setItem(
           'loggedBlogappUser', JSON.stringify(user)
         )
         blogService.setToken(user.token)
         setUser(user)
-        setUsername('')
-        setPassword('')
+        username.reset()
+        password.reset()
+        // setUsername('')
+        // setPassword('')
       })
       .catch(error => {
         showError(error.response.data.error)
@@ -73,35 +84,35 @@ const App = () => {
     window.localStorage.setItem('loggedBlogappUser', null)
   }
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
+  // const handlePasswordChange = (event) => {
+  //   setPassword(event.target.value)
+  // }
+  // const handleUsernameChange = (event) => {
+  //   setUsername(event.target.value)
+  // }
 
-  const handleNewBlogTitleChange = (event) => {
-    setNewBlogTitle(event.target.value)
-  }
-  const handleNewBlogAuthorChange = (event) => {
-    setNewBlogAuthor(event.target.value)
-  }
-  const handleNewBlogUrlChange = (event) => {
-    setNewBlogUrl(event.target.value)
-  }
+  // const handleNewBlogTitleChange = (event) => {
+  //   setNewBlogTitle(event.target.value)
+  // }
+  // const handleNewBlogAuthorChange = (event) => {
+  //   setNewBlogAuthor(event.target.value)
+  // }
+  // const handleNewBlogUrlChange = (event) => {
+  //   setNewBlogUrl(event.target.value)
+  // }
   const handleAddBlog = (event) => {
     event.preventDefault()
     const blog = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl
+      title: blogTitle.value,
+      author: blogAuthor.value,
+      url: blogUrl.value
     }
     blogService
       .create(blog)
       .then(response => {
-        setNewBlogAuthor('')
-        setNewBlogTitle('')
-        setNewBlogUrl('')
+        blogTitle.reset()
+        blogAuthor.reset()
+        blogUrl.reset()
         setBlogs(blogs.concat(response))
         showNotification('new blog was added: ' + response.title)
       })
@@ -122,7 +133,6 @@ const App = () => {
       blogService
         .update(id, updatedBlog)
         .then(response => {
-          console.log(response)
           setBlogs(blogs.map(blog => blog.id !== id ? blog : response))
         })
         .catch(error => {
@@ -151,9 +161,9 @@ const App = () => {
         <Notification notification={notification} />
         <LoginForm
           username={username}
-          handleUsernameChange={handleUsernameChange}
+          // handleUsernameChange={handleUsernameChange}
           password={password}
-          handlePasswordChange={handlePasswordChange}
+          // handlePasswordChange={handlePasswordChange}
           handleLogin={handleLogin} />
       </div>
     )
@@ -168,12 +178,9 @@ const App = () => {
       </p>
       <Togglable buttonLabel='add new blog'>
         <AddBlogForm handleAddBlog={handleAddBlog}
-          blogTitle={newBlogTitle}
-          blogAuthor={newBlogAuthor}
-          blogUrl={newBlogUrl}
-          handleBlogTitleChange={handleNewBlogTitleChange}
-          handleBlogAuthorChange={handleNewBlogAuthorChange}
-          handleBlogUrlChange={handleNewBlogUrlChange} />
+          blogTitle={blogTitle}
+          blogAuthor={blogAuthor}
+          blogUrl={blogUrl} />
       </Togglable>
       {
         blogs

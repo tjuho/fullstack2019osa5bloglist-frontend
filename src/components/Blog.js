@@ -9,21 +9,19 @@ const Blog = ({ blog, handleLike, handleRemove, loggedUser }) => {
   const toggleVisibility = () => {
     setVisible(!visible)
   }
-  console.log(blog.user)
   // if (blog.user === undefined) {
   //   blog.user.username = 'anon'
   // }
   const username = blog.user === undefined ?
     'anon' : blog.user.username
-  console.log('blog user', blog.user, 'logged user', loggedUser)
   const removeVisible =
     { display: username === loggedUser.username ? '' : 'none' }
   return (
     <div className='blog'>
-      <div onClick={toggleVisibility}>
+      <div onClick={toggleVisibility} className='blogHeader'>
         {blog.title} {blog.author}
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='togglableContent'>
         {blog.url}
         <br />
         {blog.likes} likes
@@ -41,8 +39,8 @@ const Blog = ({ blog, handleLike, handleRemove, loggedUser }) => {
 export default Blog
 
 Blog.propTypes = {
-  handleLike: PropTypes.func.isRequired,
-  handleRemove: PropTypes.func.isRequired,
+  // handleLike: PropTypes.func.isRequired,
+  // handleRemove: PropTypes.func.isRequired,
   blog: PropTypes.object.isRequired,
   loggedUser: PropTypes.object.isRequired,
 }
