@@ -5,7 +5,7 @@ import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable';
+import Togglable from './components/Togglable'
 import { useField } from './hooks'
 
 const App = () => {
@@ -145,7 +145,7 @@ const App = () => {
       const id = blog.id
       blogService
         .remove(id)
-        .then(response => {
+        .then(() => {
           setBlogs(blogs.filter(function (blog) {
             return blog.id !== id
           }))
